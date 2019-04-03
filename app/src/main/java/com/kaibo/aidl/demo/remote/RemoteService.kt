@@ -43,15 +43,13 @@ class RemoteService : Service() {
     override fun onCreate() {
         super.onCreate()
         disposable = Observable.interval(1000, TimeUnit.MILLISECONDS).subscribe({ along ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                remoteCallbackList.beginBroadcast()
-                val count = remoteCallbackList.registeredCallbackCount
-                repeat(count) { index ->
-                    val callBack: IAidlInterfaceCallBack? = remoteCallbackList.getBroadcastItem(index)
-                    callBack?.callBack(along)
-                }
-                remoteCallbackList.finishBroadcast()
+            remoteCallbackList.beginBroadcast()
+            val count = remoteCallbackList.registeredCallbackCount
+            repeat(count) { index ->
+                val callBack: IAidlInterfaceCallBack? = remoteCallbackList.getBroadcastItem(index)
+                callBack?.callBack(along)
             }
+            remoteCallbackList.finishBroadcast()
         }) {
             it.printStackTrace()
         }
